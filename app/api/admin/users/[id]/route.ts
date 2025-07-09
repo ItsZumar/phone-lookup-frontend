@@ -1,8 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-// Mock database - replace with actual database
-const users: any[] = [];
-
 function verifyAdmin(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -14,6 +11,7 @@ function verifyAdmin(request: NextRequest) {
     throw new Error("Invalid token format");
   }
 
+  console.log("Admin verification - token length:", token.length);
   return token;
 }
 
@@ -23,31 +21,33 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const { blocked } = await request.json();
     const { id } = await params;
 
-    const userIndex = users.findIndex((u) => u.id === id);
-    if (userIndex === -1) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    console.log("PATCH /api/admin/users/[id] - Updating user:", { id, blocked, backendUrl: process.env.BACKEND_URL });
 
-    users[userIndex].blocked = blocked;
+    // Determine the endpoint based on the blocked status
+    const endpoint = blocked ? `${process.env.BACKEND_URL}/users/${id}/block` : `${process.env.BACKEND_URL}/users/${id}/unblock`;
 
     // Update user on backend
-    const response = await fetch(`${process.env.BACKEND_URL}/users/${id}`, {
+    const response = await fetch(endpoint, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ isBlocked: blocked }),
     });
+
+    console.log("Backend response status:", response.status);
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.error("Failed to update user:", errorData);
       return NextResponse.json({ error: errorData.message || "Failed to update user" }, { status: response.status });
     }
 
     const data = await response.json();
+    console.log("Successfully updated user:", data);
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Error in PATCH /api/admin/users/[id]:", error);
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

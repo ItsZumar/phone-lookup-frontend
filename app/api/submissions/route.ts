@@ -90,6 +90,8 @@ export async function POST(request: NextRequest) {
 
     const userData = await profileResponse.json();
 
+
+
     // Transform the request body to match the Prisma schema's expected format
     const transformedBody = {
       phoneNumber: body.phoneNumber,

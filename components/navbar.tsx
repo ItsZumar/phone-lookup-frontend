@@ -70,9 +70,11 @@ export function Navbar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </DropdownMenuItem>
+                  {user.role !== "admin" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard">Dashboard</Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem asChild>
                     <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
@@ -140,13 +142,15 @@ export function Navbar() {
 
               {user ? (
                 <>
-                  <Link
-                    href="/dashboard"
-                    className="block px-3 py-2 text-gray-700 hover:text-primary"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
+                  {user.role !== "admin" && (
+                    <Link
+                      href="/dashboard"
+                      className="block px-3 py-2 text-gray-700 hover:text-primary"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  )}
                   <Link
                     href="/profile"
                     className="block px-3 py-2 text-gray-700 hover:text-primary"

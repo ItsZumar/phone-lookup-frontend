@@ -36,6 +36,12 @@ export default function DashboardPage() {
       return
     }
 
+    // Redirect admins to admin panel - they don't need individual dashboard
+    if (user && user.role === "admin") {
+      router.push("/admin")
+      return
+    }
+
     if (user) {
       fetchSubmissions()
     }
