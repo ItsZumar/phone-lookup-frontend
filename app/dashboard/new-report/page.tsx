@@ -51,10 +51,17 @@ export default function NewReportPage() {
     setMounted(true);
   }, []);
 
-  // Handle navigation when user is not authenticated
+  // Handle navigation when user is not authenticated or is admin
   useEffect(() => {
     if (mounted && !authLoading && !user) {
       router.push("/login");
+      return;
+    }
+
+    // Redirect admins to admin panel - they don't need to create individual reports
+    if (mounted && !authLoading && user && user.role === "admin") {
+      router.push("/admin");
+      return;
     }
   }, [mounted, authLoading, user, router]);
 

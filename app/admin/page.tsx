@@ -28,7 +28,7 @@ interface User {
   name: string;
   email: string;
   role: string;
-  blocked: boolean;
+  isBlocked: boolean;
   createdAt: string;
 }
 
@@ -39,6 +39,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [updatingSubmissions, setUpdatingSubmissions] = useState<Set<string>>(new Set());
+  const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!loading && (!user || user.role !== "admin")) {
@@ -122,8 +123,11 @@ export default function AdminPage() {
     }
   };
 
-  const toggleUserBlock = async (userId: string, blocked: boolean) => {
+
+
+  const toggleBlockUser = async (userId: string, currentBlockedStatus: boolean) => {
     try {
+      setUpdatingUsers((prev) => new Set(prev).add(userId));
       const token = localStorage.getItem("auth-token");
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: "PATCH",
@@ -131,14 +135,27 @@ export default function AdminPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ blocked }),
+        body: JSON.stringify({ blocked: !currentBlockedStatus }),
       });
 
-      if (response.ok) {
-        setUsers(users.map((u) => (u.id === userId ? { ...u, blocked } : u)));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update user");
       }
+
+      // Update the user's blocked status in the state
+      setUsers(users.map((u) => 
+        u.id === userId ? { ...u, isBlocked: !currentBlockedStatus } : u
+      ));
     } catch (error) {
       console.error("Failed to update user:", error);
+      alert(error instanceof Error ? error.message : "Failed to update user");
+    } finally {
+      setUpdatingUsers((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
+      });
     }
   };
 
@@ -185,7 +202,7 @@ export default function AdminPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -223,6 +240,18 @@ export default function AdminPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">{approvedSubmissions.length}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Blocked Users</CardTitle>
+              <X className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">
+                {Array.isArray(users) ? users.filter(u => u.isBlocked).length : 0}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -346,15 +375,22 @@ export default function AdminPage() {
                             <div className="flex items-center space-x-4 mb-2">
                               <span className="font-semibold">{user.name}</span>
                               <Badge variant={user.role === "admin" ? "default" : "secondary"}>{user.role}</Badge>
-                              {user.blocked && <Badge variant="destructive">Blocked</Badge>}
+                              {user.isBlocked && (
+                                <Badge variant="destructive">Blocked</Badge>
+                              )}
                             </div>
                             <p className="text-gray-600">{user.email}</p>
                             <p className="text-sm text-gray-500">Joined {new Date(user.createdAt).toLocaleDateString()}</p>
                           </div>
                           {user.role !== "admin" && (
                             <div className="flex items-center space-x-2">
-                              <Button variant="outline" size="sm" onClick={() => toggleUserBlock(user.id, !user.blocked)}>
-                                {user.blocked ? "Unblock" : "Block"}
+                              <Button 
+                                variant={user.isBlocked ? "default" : "outline"} 
+                                size="sm" 
+                                onClick={() => toggleBlockUser(user.id, user.isBlocked)}
+                                disabled={updatingUsers.has(user.id)}
+                              >
+                                {updatingUsers.has(user.id) ? "Updating..." : user.isBlocked ? "Unblock" : "Block"}
                               </Button>
                               <Button variant="destructive" size="sm" onClick={() => deleteUser(user.id)}>
                                 Delete

@@ -20,7 +20,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const { login } = useAuth()
+  const { login, user } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
 
@@ -29,16 +29,27 @@ export default function LoginPage() {
     setLoading(true)
     setError("")
 
-    const success = await login(email, password)
+    const result = await login(email, password)
 
-    if (success) {
+    if (result.success) {
       toast({
         title: "Welcome back!",
         description: "You have been successfully logged in.",
       })
-      router.push("/dashboard")
+      
+      // Redirect based on user role
+      if (result.user?.role === "admin") {
+        router.push("/admin")
+      } else {
+        router.push("/dashboard")
+      }
     } else {
-      setError("Invalid email or password")
+      // Check for specific blocked user error
+      if (result.error?.includes('blocked')) {
+        setError("Your account has been blocked. Please contact support.")
+      } else {
+        setError("Invalid email or password")
+      }
     }
 
     setLoading(false)

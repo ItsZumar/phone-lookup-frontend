@@ -44,6 +44,12 @@ export default function EditReportPage({ params }: { params: { id: string } }) {
       return
     }
 
+    // Redirect admins to admin panel - they don't need to edit individual reports
+    if (user && user.role === "admin") {
+      router.push("/admin")
+      return
+    }
+
     if (user) {
       fetchReport()
     }

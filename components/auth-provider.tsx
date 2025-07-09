@@ -14,8 +14,8 @@ export type User = {
 type AuthContextType = {
   user: User | null
   loading: boolean
-  login: (email: string, password: string) => Promise<boolean>
-  signup: (name: string, email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string) => Promise<{ success: boolean; user?: User; error?: string }>
+  signup: (name: string, email: string, password: string) => Promise<{ success: boolean; user?: User; error?: string }>
   logout: () => void
   refreshUser: () => Promise<void>
 }
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; user?: User; error?: string }> => {
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -66,15 +66,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("Auth Provider - Login response user:", data.user)
         console.log("Auth Provider - User role:", data.user?.role)
         setUser(data.user)
-        return true
+        return { success: true, user: data.user }
       }
-      return false
+      return { success: false, error: data.error }
     } catch {
-      return false
+      return { success: false, error: "Network error" }
     }
   }
 
-  const signup = async (name: string, email: string, password: string): Promise<boolean> => {
+  const signup = async (name: string, email: string, password: string): Promise<{ success: boolean; user?: User; error?: string }> => {
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
@@ -89,11 +89,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("Auth Provider - Signup response user:", data.user)
         console.log("Auth Provider - User role:", data.user?.role)
         setUser(data.user)
-        return true
+        return { success: true, user: data.user }
       }
-      return false
+      return { success: false, error: data.error }
     } catch {
-      return false
+      return { success: false, error: "Network error" }
     }
   }
 

@@ -44,14 +44,22 @@ export default function SignupPage() {
     }
 
     try {
-      const success = await signup(name, email, password);
+      const result = await signup(name, email, password);
 
-      if (success) {
+      if (result.success) {
         toast({
           title: "Welcome to PhoneGuard!",
           description: "Your account has been created successfully.",
         });
-        router.push("/dashboard");
+        
+        // Redirect based on user role (though new signups are typically users)
+        if (result.user?.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/dashboard");
+        }
+      } else {
+        setError(result.error || "Failed to create account");
       }
     } catch (error: any) {
       console.log(error.message);
