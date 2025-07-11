@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useAuth } from "@/components/auth-provider"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import Link from "next/link";
+import { useAuth } from "@/components/auth-provider";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,18 +11,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Shield, Menu, X } from "lucide-react"
-import { useState } from "react"
+} from "@/components/ui/dropdown-menu";
+import { Shield, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 export function Navbar() {
-  const { user, logout } = useAuth()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  
-  // Debug logging
-  console.log("Navbar - User:", user)
-  console.log("Navbar - User role:", user?.role)
-  console.log("Navbar - Is admin check:", user?.role === "admin")
+  const { user, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <nav className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -56,9 +51,7 @@ export function Navbar() {
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="/avatars/01.png" alt={user.name || "User"} />
-                      <AvatarFallback>
-                        {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                      </AvatarFallback>
+                      <AvatarFallback>{user.name ? user.name.charAt(0).toUpperCase() : "U"}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -111,32 +104,16 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <Link
-                href="/"
-                className="block px-3 py-2 text-gray-700 hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
+              <Link href="/" className="block px-3 py-2 text-gray-700 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
                 Home
               </Link>
-              <Link
-                href="/features"
-                className="block px-3 py-2 text-gray-700 hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
+              <Link href="/features" className="block px-3 py-2 text-gray-700 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
                 Features
               </Link>
-              <Link
-                href="/about"
-                className="block px-3 py-2 text-gray-700 hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
+              <Link href="/about" className="block px-3 py-2 text-gray-700 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
                 About
               </Link>
-              <Link
-                href="/contact"
-                className="block px-3 py-2 text-gray-700 hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
+              <Link href="/contact" className="block px-3 py-2 text-gray-700 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
                 Contact
               </Link>
 
@@ -169,8 +146,8 @@ export function Navbar() {
                   )}
                   <button
                     onClick={() => {
-                      logout()
-                      setMobileMenuOpen(false)
+                      logout();
+                      setMobileMenuOpen(false);
                     }}
                     className="block w-full text-left px-3 py-2 text-gray-700 hover:text-primary"
                   >
@@ -179,11 +156,7 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  <Link
-                    href="/login"
-                    className="block px-3 py-2 text-gray-700 hover:text-primary"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
+                  <Link href="/login" className="block px-3 py-2 text-gray-700 hover:text-primary" onClick={() => setMobileMenuOpen(false)}>
                     Login
                   </Link>
                   <Link
@@ -200,5 +173,5 @@ export function Navbar() {
         )}
       </div>
     </nav>
-  )
+  );
 }
