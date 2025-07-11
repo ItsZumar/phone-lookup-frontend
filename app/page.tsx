@@ -39,15 +39,12 @@ export default function HomePage() {
 
   const fetchRecentReports = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/reports/public/recent`;
-      console.log("Fetching recent reports from:", url);
-      
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001"}/reports/public/recent`;
+
       const response = await fetch(url);
-      console.log("Response status:", response.status);
-      
+
       if (response.ok) {
         const data = await response.json();
-        console.log("Recent reports data:", data);
         setRecentReports(data);
       } else {
         const errorText = await response.text();
@@ -62,7 +59,7 @@ export default function HomePage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/stats');
+      const response = await fetch("/api/stats");
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -100,7 +97,7 @@ export default function HomePage() {
 
   const formatPhoneNumber = (phoneNumber: string) => {
     // Basic phone number formatting
-    const cleaned = phoneNumber.replace(/\D/g, '');
+    const cleaned = phoneNumber.replace(/\D/g, "");
     if (cleaned.length === 10) {
       return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
     }
@@ -167,21 +164,13 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-primary mb-2">
-                {loadingStats ? (
-                  <div className="animate-pulse">...</div>
-                ) : (
-                  `${stats.totalReports.toLocaleString()}+`
-                )}
+                {loadingStats ? <div className="animate-pulse">...</div> : `${stats.totalReports.toLocaleString()}+`}
               </div>
               <div className="text-gray-600">Numbers Reported</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-primary mb-2">
-                {loadingStats ? (
-                  <div className="animate-pulse">...</div>
-                ) : (
-                  `${stats.totalUsers.toLocaleString()}+`
-                )}
+                {loadingStats ? <div className="animate-pulse">...</div> : `${stats.totalUsers.toLocaleString()}+`}
               </div>
               <div className="text-gray-600">Active Users</div>
             </div>
@@ -266,13 +255,9 @@ export default function HomePage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <Badge variant={getCategoryColor(report.category)}>{report.category}</Badge>
-                      <span className="text-sm text-gray-500">
-                        {new Date(report.createdAt).toLocaleDateString()}
-                      </span>
+                      <span className="text-sm text-gray-500">{new Date(report.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <div className="mt-2 text-xs text-gray-500">
-                      Reported by {report.user?.name || "Anonymous"}
-                    </div>
+                    <div className="mt-2 text-xs text-gray-500">Reported by {report.user?.name || "Anonymous"}</div>
                   </CardContent>
                 </Card>
               ))}

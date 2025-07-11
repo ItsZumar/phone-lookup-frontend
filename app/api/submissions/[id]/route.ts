@@ -91,7 +91,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     const userData = await userResponse.json();
-    console.log("User data:", userData);
 
     // Get the report
     const response = await fetch(`${process.env.BACKEND_URL}/reports/${reportId}`, {
@@ -106,12 +105,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     const data = await response.json();
-    console.log("Report data:", data);
-    console.log("Comparing userData.id:", userData.id, "with data.userId:", data.userId);
 
     // Verify ownership - use userId (camelCase) instead of user_id (snake_case)
     if (data.userId !== userData.id) {
-      console.log("Ownership verification failed");
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
@@ -170,7 +166,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     // Get the request body
     const body = await request.json();
-    console.log("Request body:", body);
 
     // Transform the data to match backend expectations
     const transformedData = {
@@ -178,7 +173,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       message: body.message,
       category: body.category,
     };
-    console.log("Transformed data:", transformedData);
 
     // Update the report using PATCH
     const response = await fetch(`${process.env.BACKEND_URL}/reports/${reportId}`, {
@@ -189,8 +183,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       },
       body: JSON.stringify(transformedData),
     });
-
-    console.log("Backend response status:", response.status);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: "Unknown error" }));

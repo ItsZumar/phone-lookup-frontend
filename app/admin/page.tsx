@@ -68,7 +68,6 @@ export default function AdminPage() {
 
       if (submissionsResponse.ok) {
         const submissionsData = await submissionsResponse.json();
-        console.log("Submissions data:", submissionsData);
         // Handle both array and object responses
         const submissionsArray = Array.isArray(submissionsData) ? submissionsData : submissionsData.submissions || [];
         setSubmissions(submissionsArray);
@@ -76,7 +75,6 @@ export default function AdminPage() {
 
       if (usersResponse.ok) {
         const usersData = await usersResponse.json();
-        console.log("Users data:", usersData);
         // Handle both array and object responses
         const usersArray = Array.isArray(usersData) ? usersData : usersData.users || [];
         setUsers(usersArray);
@@ -105,7 +103,6 @@ export default function AdminPage() {
         const updatedReport = await response.json();
         // Update the submission with the response from backend (which has uppercase status)
         setSubmissions(submissions.map((s) => (s.id === id ? { ...s, status: updatedReport.status } : s)));
-        console.log(`Successfully updated submission ${id} to ${updatedReport.status}`);
       } else {
         const errorData = await response.json();
         console.error("Failed to update submission:", errorData);
@@ -122,8 +119,6 @@ export default function AdminPage() {
       });
     }
   };
-
-
 
   const toggleBlockUser = async (userId: string, currentBlockedStatus: boolean) => {
     try {
@@ -144,9 +139,7 @@ export default function AdminPage() {
       }
 
       // Update the user's blocked status in the state
-      setUsers(users.map((u) => 
-        u.id === userId ? { ...u, isBlocked: !currentBlockedStatus } : u
-      ));
+      setUsers(users.map((u) => (u.id === userId ? { ...u, isBlocked: !currentBlockedStatus } : u)));
     } catch (error) {
       console.error("Failed to update user:", error);
       alert(error instanceof Error ? error.message : "Failed to update user");
@@ -249,9 +242,7 @@ export default function AdminPage() {
               <X className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {Array.isArray(users) ? users.filter(u => u.isBlocked).length : 0}
-              </div>
+              <div className="text-2xl font-bold text-red-600">{Array.isArray(users) ? users.filter((u) => u.isBlocked).length : 0}</div>
             </CardContent>
           </Card>
         </div>
@@ -375,18 +366,16 @@ export default function AdminPage() {
                             <div className="flex items-center space-x-4 mb-2">
                               <span className="font-semibold">{user.name}</span>
                               <Badge variant={user.role === "admin" ? "default" : "secondary"}>{user.role}</Badge>
-                              {user.isBlocked && (
-                                <Badge variant="destructive">Blocked</Badge>
-                              )}
+                              {user.isBlocked && <Badge variant="destructive">Blocked</Badge>}
                             </div>
                             <p className="text-gray-600">{user.email}</p>
                             <p className="text-sm text-gray-500">Joined {new Date(user.createdAt).toLocaleDateString()}</p>
                           </div>
                           {user.role !== "admin" && (
                             <div className="flex items-center space-x-2">
-                              <Button 
-                                variant={user.isBlocked ? "default" : "outline"} 
-                                size="sm" 
+                              <Button
+                                variant={user.isBlocked ? "default" : "outline"}
+                                size="sm"
                                 onClick={() => toggleBlockUser(user.id, user.isBlocked)}
                                 disabled={updatingUsers.has(user.id)}
                               >

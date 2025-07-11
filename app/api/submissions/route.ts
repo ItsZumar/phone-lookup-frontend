@@ -30,11 +30,9 @@ export async function GET(request: NextRequest) {
     }
 
     const userData = await profileResponse.json();
-    // console.log("Current user data:", userData)
 
     // Then fetch reports for this specific user
     const reportsUrl = `${process.env.BACKEND_URL}/reports`;
-    // console.log("Fetching reports from:", reportsUrl)
 
     const response = await fetch(reportsUrl, {
       headers: {
@@ -49,8 +47,7 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    // console.log("Raw reports data:", data)
-    
+
     // Filter reports for the current user and transform the data
     const transformedData = data
       .filter((report: any) => report.userId === userData.id)
@@ -64,7 +61,6 @@ export async function GET(request: NextRequest) {
         createdAt: report.createdAt,
       }));
 
-    // console.log("Transformed reports:", transformedData)
     return NextResponse.json(transformedData);
   } catch (error) {
     console.error("Error in GET /api/submissions:", error);
@@ -90,17 +86,13 @@ export async function POST(request: NextRequest) {
 
     const userData = await profileResponse.json();
 
-
-
     // Transform the request body to match the Prisma schema's expected format
     const transformedBody = {
       phoneNumber: body.phoneNumber,
       message: body.message,
       category: body.category.toUpperCase(), // Convert category to uppercase
-      userId: userData.id // Use userId to match Prisma schema
+      userId: userData.id, // Use userId to match Prisma schema
     };
-
-    console.log("Creating report with data:", transformedBody);
 
     const response = await fetch(`${process.env.BACKEND_URL}/reports`, {
       method: "POST",
@@ -118,8 +110,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log("Created report:", data);
-    
+
     // Transform the response to match the frontend's expected format
     const transformedData = {
       id: data.id,
@@ -128,7 +119,7 @@ export async function POST(request: NextRequest) {
       message: data.message,
       category: data.category,
       status: data.status.toLowerCase(),
-      createdAt: data.createdAt
+      createdAt: data.createdAt,
     };
 
     return NextResponse.json(transformedData);

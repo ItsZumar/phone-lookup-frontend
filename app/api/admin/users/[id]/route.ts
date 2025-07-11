@@ -11,7 +11,6 @@ function verifyAdmin(request: NextRequest) {
     throw new Error("Invalid token format");
   }
 
-  console.log("Admin verification - token length:", token.length);
   return token;
 }
 
@@ -20,8 +19,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const token = verifyAdmin(request);
     const { blocked } = await request.json();
     const { id } = await params;
-
-    console.log("PATCH /api/admin/users/[id] - Updating user:", { id, blocked, backendUrl: process.env.BACKEND_URL });
 
     // Determine the endpoint based on the blocked status
     const endpoint = blocked ? `${process.env.BACKEND_URL}/users/${id}/block` : `${process.env.BACKEND_URL}/users/${id}/unblock`;
@@ -35,8 +32,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       },
     });
 
-    console.log("Backend response status:", response.status);
-
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Failed to update user:", errorData);
@@ -44,7 +39,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
 
     const data = await response.json();
-    console.log("Successfully updated user:", data);
     return NextResponse.json(data);
   } catch (error) {
     console.error("Error in PATCH /api/admin/users/[id]:", error);

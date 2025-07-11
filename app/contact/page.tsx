@@ -44,8 +44,6 @@ export default function ContactPage() {
       return;
     }
 
-    console.log("Submitting form data:", formData);
-
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -188,12 +186,7 @@ export default function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
-                      <Input 
-                        id="name" 
-                        value={formData.name} 
-                        onChange={(e) => handleInputChange("name", e.target.value)} 
-                        required 
-                      />
+                      <Input id="name" value={formData.name} onChange={(e) => handleInputChange("name", e.target.value)} required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
@@ -209,11 +202,11 @@ export default function ContactPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="subject">Subject (minimum 5 characters)</Label>
-                    <Input 
-                      id="subject" 
-                      value={formData.subject} 
-                      onChange={(e) => handleInputChange("subject", e.target.value)} 
-                      required 
+                    <Input
+                      id="subject"
+                      value={formData.subject}
+                      onChange={(e) => handleInputChange("subject", e.target.value)}
+                      required
                       minLength={5}
                     />
                     {formData.subject.length > 0 && formData.subject.length < 5 && (

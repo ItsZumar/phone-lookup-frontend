@@ -51,7 +51,7 @@ export default function SignupPage() {
           title: "Welcome to PhoneGuard!",
           description: "Your account has been created successfully.",
         });
-        
+
         // Redirect based on user role (though new signups are typically users)
         if (result.user?.role === "admin") {
           router.push("/admin");
@@ -62,7 +62,6 @@ export default function SignupPage() {
         setError(result.error || "Failed to create account");
       }
     } catch (error: any) {
-      console.log(error.message);
       setError(error instanceof Error ? error.message : "Failed to create account");
     } finally {
       setLoading(false);
